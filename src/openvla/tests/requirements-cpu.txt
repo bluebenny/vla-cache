@@ -1,0 +1,11 @@
+# CPU unit-test environment (Python 3.10). download.pytorch.org may be blocked; the PyPI torch wheel also runs on CPU.
+torch==2.2.0
+torchvision==0.17.0
+numpy<2
+timm==0.9.10
+tokenizers==0.21.1
+opencv-python-headless==4.10.0.84
+scikit-image==0.25.0
+pillow
+pytest
+transformers @ git+https://github.com/siyuhsu/transformers.git@2302fce58afa3a4f8461625b1394f9e9c8a7f1ea

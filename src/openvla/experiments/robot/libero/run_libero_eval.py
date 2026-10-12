@@ -12,6 +12,8 @@ Usage:
         --task_suite_name [ libero_spatial | libero_object | libero_goal | libero_10 | libero_90 ] \
         --center_crop [ True | False ] \
         --run_id_note <OPTIONAL TAG TO INSERT INTO RUN ID FOR LOGGING> \
+        --vla_mode [ B0 | B1 | V | Vp ] \
+        --timing [ True | False ] \
         --use_wandb [ True | False ] \
         --wandb_project <PROJECT> \
         --wandb_entity <ENTITY>
@@ -50,6 +52,8 @@ from experiments.robot.robot_utils import (
     normalize_gripper_action,
     set_seed_everywhere,
 )
+from experiments.robot.vla_cache_sdpa import resolve_vla_mode
+from experiments.robot.vla_timing import attach_stage_timer
 
 
 @dataclass
@@ -58,6 +62,11 @@ class GenerateConfig:
 
     # Use VLA-Cache for faster inference
     use_vla_cache: bool = True
+    # Inference mode, overrides `use_vla_cache` when set:
+    #   B0 (SDPA, no VLA-Cache, no attention outputs) | B1 (public baseline) | V (public VLA-Cache) | Vp (V': VLA-Cache on SDPA)
+    vla_mode: Optional[str] = None
+    timing: bool = False                             # Log per-stage CUDA-event timings (JSONL, one row per query)
+    timing_log_path: Optional[str] = None            # Defaults to <local_log_dir>/<run_id>-timing.jsonl
     
     #################################################################################################################
     # Model-specific parameters
@@ -104,6 +113,9 @@ def eval_libero(cfg: GenerateConfig) -> None:
     # [OpenVLA] Set action un-normalization key
     cfg.unnorm_key = cfg.task_suite_name
 
+    # Resolve the inference mode (B0 / B1 / V / Vp) before loading the model
+    vla_mode = resolve_vla_mode(cfg)
+
     # Load model
     model = get_model(cfg)
 
@@ -121,13 +133,20 @@ def eval_libero(cfg: GenerateConfig) -> None:
         processor = get_processor(cfg)
 
     # Initialize local logging
-    run_id = f"EVAL-{cfg.task_suite_name}-{cfg.model_family}-{DATE_TIME}"
+    run_id = f"EVAL-{cfg.task_suite_name}-{cfg.model_family}-{vla_mode}-{DATE_TIME}"
     if cfg.run_id_note is not None:
         run_id += f"--{cfg.run_id_note}"
     os.makedirs(cfg.local_log_dir, exist_ok=True)
     local_log_filepath = os.path.join(cfg.local_log_dir, run_id + ".txt")
     log_file = open(local_log_filepath, "w")
     print(f"Logging to local log file: {local_log_filepath}")
+
+    # Per-stage timing (vision / prefill / decode / select / attn_info)
+    stage_timer = None
+    if cfg.timing:
+        timing_log_path = cfg.timing_log_path or os.path.join(cfg.local_log_dir, run_id + "-timing.jsonl")
+        stage_timer = attach_stage_timer(model, timing_log_path)
+        print(f"Logging stage timings to: {timing_log_path}")
 
     # Initialize Weights & Biases logging as well
     if cfg.use_wandb:
@@ -225,6 +244,8 @@ def eval_libero(cfg: GenerateConfig) -> None:
 
 
                     # Query model to get action
+                    if stage_timer is not None:
+                        stage_timer.context = {"task_id": task_id, "episode": episode_idx, "t": t}
                     action, last_caches, result_image = get_action(
                         cfg,
                         model,
