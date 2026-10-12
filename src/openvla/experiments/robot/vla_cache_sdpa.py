@@ -121,7 +121,7 @@ class AttnStatsCollector:
 
     @torch.no_grad()
     def record(self, layer_idx, query_states, key_states, causal_mask, cache_position) -> torch.Tensor:
-        """Computes this layer's statistics; returns the attention probabilities (dropped by the caller)."""
+        """Computes this layer's statistics; returns the attention probabilities (only `eager_debug` uses them)."""
         if self.timer is not None:
             self.timer.start("attn_info")
         attn_weights = eager_attention_weights(query_states, key_states, causal_mask, cache_position)

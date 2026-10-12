@@ -109,7 +109,7 @@ V에서는 attention 정보 계산이 eager attention과 select(`task_relevant_s
   cd src/openvla && <venv>/bin/python -m pytest tests -q
   <venv>/bin/python vla_cache_scripts/verify_vprime_equivalence.py --tiny_random
   ```
-- 검증 상태: 이 VM에서 torch 2.14.1(CPU 실행)과 포크 transformers(`2302fce`)로 `pytest tests` 32개가 통과했다. `--tiny_random` 검증도 A/B PASS다.
-  핀 버전(torch 2.2.0)은 PyPI CUDA 휠의 다운로드가 느려 별도로 확인한다.
+- 검증 상태: 이 VM의 CPU에서 포크 transformers(`2302fce`)와 함께 torch 2.2.0(핀 버전)과 2.14.1 모두로 확인했다.
+  `pytest tests` 32개가 통과했고 `--tiny_random` 검증도 A/B PASS다. PyPI의 CUDA 휠은 수 GB라 설치에 시간이 오래 걸린다.
 - 테스트는 `prismatic` 패키지 초기화(TF, draccus 등 무거운 import)와 tensorflow, CPU에서의 `torch.cuda.Event/synchronize`를 stub으로 우회한다(`experiments/robot/tiny_openvla.py:install_light_import_stubs`).
 - 브랜치 작업 후에는 커밋하고 push한다. PR은 요청이 있을 때만 만든다.

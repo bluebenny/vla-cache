@@ -7,6 +7,7 @@ synthetic frame pairs, and stubs for the heavy imports that the CPU environment 
 """
 
 import hashlib
+import importlib
 import importlib.machinery
 import importlib.util
 import os
@@ -54,6 +55,8 @@ def install_light_import_stubs() -> None:
         sys.modules["tensorflow"] = stub
 
     if not torch.cuda.is_available():
+        # torch._dynamo checks the real `torch.cuda.Event` class when it is first imported (torch 2.2)
+        importlib.import_module("torch._dynamo")
         torch.cuda.Event = _NoCudaEvent
         torch.cuda.synchronize = lambda device=None: None
 
