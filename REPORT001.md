@@ -28,6 +28,7 @@
 3. **B1→V와 B0→V'는 "VLA-Cache만 켜짐"이라는 점은 같지만, 비용이 생기는 방식이 다르다(4절).**
    - B0→V'에는 통계용 QKᵀ·softmax 계산(`attn_info`)이 새로 생긴다.
    - 재사용 prefill에서 SDPA 커널이 `is_causal` 경로에서 명시 mask 경로로 바뀐다.
+4. **V'는 B0에 대체로 최소한의 변경만 더해 KV 재사용을 구현한다.** 다만 재사용 prefill의 0·1층에도 명시 mask를 쓰는 점은 필요 이상이다. 현재 구현을 유지하기로 했고, 자세한 내용은 6절에 있다.
 
 ## 2. V vs V'
 
@@ -159,3 +160,43 @@ CUDA SDPA는 임의 mask가 있으면 flash 백엔드를 쓸 수 없다. 그래�
   2. 각 경로에서 선택되는 SDPA 백엔드(B0와 V' 재사용 prefill)
   3. 실제 체크포인트와 실제 프레임에서의 검사 C 수치(재사용 인덱스 Jaccard, 비율 차이, 액션 일치)
   4. 단계별 시간: `attn_info_ms`가 prefill에서 차지하는 비율, V의 select 축약 비용과 V'의 `attn_info` 비교
+
+## 6. B0 대비 V'의 최소성 검토
+질문: V'는 B0에 최소한의 변경으로 KV 재사용을 구현한 것인가?
+
+**결론: 대체로 그렇다. 다만 필요 이상인 차이가 한 군데 있다.**
+- V'는 B0의 다음 요소를 그대로 쓴다.
+  - `attn_implementation="sdpa"` 로딩, `output_attentions=False`
+  - SDPA attention 본체, decode 경로
+- 에피소드 첫 스텝의 출력은 B0와 비트 단위로 같다(3.1절).
+
+V'가 B0에 더하는 것은 다음과 같다.
+
+| 더하는 것 | 분류 | 설명 |
+|---|---|---|
+| 직전 KV cache 유지·재사용(`prompt_cache`), 포크의 pruning과 `index_copy_` | KV 재사용에 필수 | `ou:412-433`, `[fork] modeling_llama.py:1022-1047`, `[fork] cache_utils.py:465-466` |
+| pruning된 층(2층부터)의 명시 causal mask | KV 재사용에 필수 | 남은 query의 위치가 연속적이지 않다. SDPA `is_causal`(top-left 정렬)로는 표현할 수 없다. |
+| select(`find_static_patches`, top-k, schedule) | VLA-Cache 결정에 필수(요구 1) | |
+| 층별 통계: QKᵀ, softmax(eager와 같은 dtype과 순서), entropy, 15층 축약 | V와 같은 결정을 위해 필수(요구 1, 2) | SDPA는 attention 확률을 돌려주지 않으므로 QKᵀ 재계산은 피할 수 없다. schedule은 32층 전체의 min-max와 층 순서대로 누적되는 smoothing을 쓰므로 32층 모두 필요하다. |
+| 오버레이 그리기(PIL) | 요구사항이 강제(요구 4: select를 V와 동일하게) | KV 재사용 자체에는 필요 없다. |
+| `VPrimeLlamaSdpaAttention.forward` 복사본 | 동작 영향 없음 | 코드 크기만 늘어난다. collector를 끄면 원본과 비트 동일하다(`test_collector_off_keeps_original_sdpa_outputs`). |
+| `eager_debug` 분기, collector 확인 | 동작 영향 없음 | 검증용이다. 기본 경로에서는 Python 조건문 몇 개뿐이다. |
+| **재사용 prefill의 0·1층 명시 mask**와 `LlamaModel._update_causal_mask` 인스턴스 패치 | **필요 이상** | 래퍼(`sdpa:244-252`, `sdpa:293`)가 재사용 prefill 전체의 mask를 실체화한다. pruning 전인 0·1층(q=kv=N)은 `is_causal`로도 정확한데도 명시 mask를 쓴다(3.2절 확인 결과: 0, 1층 `[1,1,292,292]`). |
+
+**필요 이상 항목의 영향**
+- GPU에서는 재사용 스텝의 0·1층이 B0와 달리 flash가 아닌 SDPA 백엔드(mem-efficient 또는 math)를 탈 수 있다.
+- 그래서 B0→V' 재사용 스텝의 `prefill_ms`에는 VLA-Cache 본래의 효과 외에 32층 중 2개 층의 커널 차이가 섞인다.
+- 결정과 출력 값에는 영향이 없다. mask 값이 같고, 두 층에서는 `is_causal`과 수학적으로 같은 마스킹이다.
+- 다만 커널이 다르면 부동소수 오차 수준의 차이는 생길 수 있다.
+
+**대안 (검토만 하고 적용하지 않음)**
+- 방법
+  - `VPrimeLlamaSdpaAttention.forward` 안에서 `causal_mask is None and q_len > 1 and q_len != kv_len`일 때만 `causal_mask_from_positions`로 mask를 만든다.
+  - `_update_causal_mask` 패치를 제거한다.
+- 효과
+  - 재사용 prefill의 0·1층이 B0와 같은 `is_causal` 경로를 탄다. 모델 수준 패치도 없어진다.
+  - mask 값이 같으므로 V와의 결정과 출력 동일성(`eager_debug` 비트 동일)은 유지된다.
+- 사용자 결정으로 **현재 구현을 유지**한다.
+
+**측정 시 참고**
+- Thor에서 B0→V'의 재사용 스텝 `prefill_ms`를 해석할 때는 위 2개 층의 커널 차이가 포함되어 있음을 감안한다.
