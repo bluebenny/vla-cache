@@ -6,6 +6,14 @@ from PIL import Image, ImageDraw
 from skimage.util import view_as_blocks
 
 
+# Token layout of the OpenVLA prefill sequence: <BOS> | 256 vision patches | text tokens.
+VISION_TOKEN_START = 1
+NUM_VISION_TOKENS = 256
+NUM_TEXT_TOKENS = 35
+# Layer whose text->vision attention drives the task-relevant selection.
+ATTN_LAYER_ID = 15
+
+
 @torch.no_grad()
 def get_layer_mask_schedule(multihead_attention, apply_weighted_growth=True, growth_factor=0.55):
     """
@@ -19,16 +27,28 @@ def get_layer_mask_schedule(multihead_attention, apply_weighted_growth=True, gro
     Returns:
         torch.Tensor: Layer-wise reuse proportions, shape (num_layers - 1,).
     """
-    device = multihead_attention[0].device
-    entropies = []
-    
-    for attn in multihead_attention[:-1]:
-        attn = attn.mean(dim=1)[0]
-        attn /= attn.sum(dim=-1, keepdim=True) + 1e-10
-        attn = torch.nan_to_num(attn, nan=0.0)
-        token_entropy = -torch.sum(attn * torch.log(attn + 1e-10), dim=-1)
-        entropies.append(token_entropy.mean())
+    entropies = [layer_attention_entropy(attn) for attn in multihead_attention[:-1]]
+    return layer_mask_schedule_from_entropies(entropies, apply_weighted_growth, growth_factor)
 
+
+@torch.no_grad()
+def layer_attention_entropy(attn):
+    """
+    Mean token entropy of one layer's head-averaged attention map (shape: [1, heads, q_tokens, kv_tokens]).
+    """
+    attn = attn.mean(dim=1)[0]
+    attn /= attn.sum(dim=-1, keepdim=True) + 1e-10
+    attn = torch.nan_to_num(attn, nan=0.0)
+    token_entropy = -torch.sum(attn * torch.log(attn + 1e-10), dim=-1)
+    return token_entropy.mean()
+
+
+@torch.no_grad()
+def layer_mask_schedule_from_entropies(entropies, apply_weighted_growth=True, growth_factor=0.55):
+    """
+    Turns per-layer attention entropies (List[0-dim Tensor], see `layer_attention_entropy`) into reuse proportions.
+    """
+    device = entropies[0].device
     entropies = torch.stack(entropies)
     norm_entropy = (entropies - entropies.min()) / (entropies.max() - entropies.min() + 1e-10)
     reuse = 1.0 - norm_entropy
@@ -92,22 +112,30 @@ def find_static_patches(img_0, img_1, patch_size=14, top_k=150, sim_threshold=0.
     return top_patch_ids
 
 @torch.no_grad()
-def token_attention_merge(multihead_attention, layer_id=15):
+def token_attention_merge(multihead_attention, layer_id=ATTN_LAYER_ID):
     """
     Computes mean attention from text tokens to vision tokens.
     """
-    attn_map = multihead_attention[layer_id].to(torch.float32).squeeze(0).mean(dim=0)
+    return text_vision_relation(multihead_attention[layer_id], multihead_attention[-1]).cpu()
 
-    v_token_start = 1
-    v_token_end = v_token_start + 256
+
+@torch.no_grad()
+def text_vision_relation(layer_attention, attention_pos):
+    """
+    Mean attention from text tokens to vision tokens for one layer (shape: [1, heads, q_tokens, kv_tokens]).
+    `attention_pos` holds the sequence positions of the query rows. Stays on the attention's device.
+    """
+    attn_map = layer_attention.to(torch.float32).squeeze(0).mean(dim=0)
+
+    v_token_start = VISION_TOKEN_START
+    v_token_end = v_token_start + NUM_VISION_TOKENS
     t_token_start = v_token_end
-    t_token_end = t_token_start + 35
+    t_token_end = t_token_start + NUM_TEXT_TOKENS
 
-    attention_pos = multihead_attention[-1]
     text_mask = (attention_pos >= t_token_start) & (attention_pos < t_token_end)
 
     relation = attn_map[text_mask, v_token_start:v_token_end]
-    return relation.mean(dim=0).cpu()
+    return relation.mean(dim=0)
 
 def get_top_attention_patches(attn_scores, top_k=120):
     """
@@ -153,6 +181,14 @@ def task_relevant_selection(multihead_attention, image, significant_patches, top
     Highlights and compares significant patches with top attention patches.
     """
     attn_score = token_attention_merge(multihead_attention)
+    return task_relevant_selection_from_scores(attn_score, image, significant_patches, top_k)
+
+
+def task_relevant_selection_from_scores(attn_score, image, significant_patches, top_k=120):
+    """
+    Same as `task_relevant_selection`, given the text->vision scores (see `text_vision_relation`) instead of the
+    full attention maps.
+    """
     top_patches = get_top_attention_patches(attn_score, top_k)
 
     only_significant = set(significant_patches) - set(top_patches)

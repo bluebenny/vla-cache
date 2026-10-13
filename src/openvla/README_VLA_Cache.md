@@ -64,3 +64,27 @@ python experiments/robot/libero/run_libero_eval.py \
   --task_suite_name libero_spatial  \
   --use_vla_cache False \
 ```
+
+## Inference Modes (B0 / B1 / V / V')
+
+`--vla_mode` selects the inference mode (it overrides `--use_vla_cache` when set):
+
+| Mode | Description |
+|---|---|
+| `B0` | VLA-Cache off, attention outputs off, LLM loaded with `attn_implementation="sdpa"` |
+| `B1` | Public baseline (`--use_vla_cache False`); `output_attentions=True` runs the LLM attention eagerly |
+| `V` | Public VLA-Cache (`--use_vla_cache True`) |
+| `Vp` | V': the reuse decisions of V on the SDPA path of B0; the attention statistics are computed inside the attention modules during the prefill (`experiments/robot/vla_cache_sdpa.py`) |
+
+`--timing True` writes per-stage CUDA-event timings (vision / prefill / decode / select / attn_info) to
+`<local_log_dir>/<run_id>-timing.jsonl`.
+
+Check that V' makes the same reuse decisions as V on a fixed frame pair:
+
+```bash
+python vla_cache_scripts/verify_vprime_equivalence.py \
+  --pretrained_checkpoint checkpoints/openvla-7b-finetuned-libero-spatial \
+  --prev_image prev.png --cur_image cur.png --center_crop \
+  --instruction "pick up the black bowl between the plate and the ramekin and place it on the plate" \
+  --unnorm_key libero_spatial
+```

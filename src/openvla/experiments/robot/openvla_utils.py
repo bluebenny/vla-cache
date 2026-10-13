@@ -21,6 +21,9 @@ from prismatic.extern.hf.modeling_prismatic import OpenVLAForActionPrediction
 from prismatic.extern.hf.processing_prismatic import PrismaticImageProcessor, PrismaticProcessor
 
 from .vla_cache_utils import find_static_patches, task_relevant_selection, get_layer_mask_schedule
+from .vla_cache_utils import task_relevant_selection_from_scores, layer_mask_schedule_from_entropies
+from .vla_cache_sdpa import ATTENTION_OUTPUT_MODES, SDPA_MODES, get_vla_mode, install_vprime
+from .vla_timing import get_stage_timer
 
 from transformers import DynamicCache
 
@@ -262,6 +265,9 @@ def get_vla(cfg):
         update_auto_map(cfg.pretrained_checkpoint)
         check_model_logic_mismatch(cfg.pretrained_checkpoint)
 
+    # B0 / V' pin the LLM to SDPA explicitly; B1 / V keep the public loading call
+    mode = get_vla_mode(cfg)
+    attn_kwargs = {"attn_implementation": "sdpa"} if mode in SDPA_MODES else {}
 
     vla = AutoModelForVision2Seq.from_pretrained(
         cfg.pretrained_checkpoint,
@@ -271,6 +277,7 @@ def get_vla(cfg):
         load_in_4bit=cfg.load_in_4bit,
         low_cpu_mem_usage=True,
         trust_remote_code=True,
+        **attn_kwargs,
     )
 
     # Move model to device.
@@ -278,6 +285,13 @@ def get_vla(cfg):
     #       already be set to the right devices and casted to the correct dtype upon loading.
     if not cfg.load_in_8bit and not cfg.load_in_4bit:
         vla = vla.to(DEVICE)
+
+    if mode == "Vp":
+        install_vprime(vla, attn_compute=getattr(cfg, "vprime_attn_compute", "sdpa"))
+    print(
+        f"[*] VLA mode: {mode} | LLM attn_implementation: {vla.language_model.config._attn_implementation} "
+        f"({type(vla.language_model.model.layers[0].self_attn).__name__})"
+    )
 
     # Load dataset stats used during finetuning (for action un-normalization).
     dataset_statistics_path = os.path.join(cfg.pretrained_checkpoint, "dataset_statistics.json")
@@ -370,6 +384,11 @@ def process_image(image, crop_scale=0.9, batch_size=1):
 
 def get_vla_action(cfg, vla, processor, base_vla_name, obs, task_label, unnorm_key, center_crop=False, last_caches=None):
     """Generates an action with the VLA policy."""
+    mode = get_vla_mode(cfg)
+    timer = get_stage_timer(vla)
+    timer.begin_step()
+    timer.start("step_total")
+
     image = Image.fromarray(obs["full_image"])
     image = image.convert("RGB")
     
@@ -377,6 +396,7 @@ def get_vla_action(cfg, vla, processor, base_vla_name, obs, task_label, unnorm_k
     prev_image = Image.fromarray(obs["prev_image"])
     prompt_cache = last_caches['past_key_values'] if last_caches is not None else None
     prev_attn = last_caches['attentions'] if last_caches is not None else None
+    prev_stats = last_caches.get('attn_stats') if last_caches is not None else None
     mask_indices = None
     vla.language_model.config.proportion_attn_var = None
 
@@ -385,26 +405,54 @@ def get_vla_action(cfg, vla, processor, base_vla_name, obs, task_label, unnorm_k
     # IMPORTANT: Let's say crop scale == 0.9. To get the new height and width (post-crop), multiply
     #            the original height and width by sqrt(0.9) -- not 0.9!
     if center_crop:
-        image = process_image(image)
-        prev_image = process_image(prev_image)
+        with timer.stage("center_crop"):
+            image = process_image(image)
+            prev_image = process_image(prev_image)
 
-    if cfg.use_vla_cache:
+    if mode == "Vp":
+        # V': same selection as V below, from the statistics the previous prefill collected on the SDPA path
+        print(">> VLA-Cache inference mode (V': SDPA)")
+        with timer.stage("select"):
+            # Step 1: Identify visually stable patches across frames
+            if prompt_cache is not None:
+                with timer.stage("select_static"):
+                    stable_patches = find_static_patches(image, prev_image, top_k=130)
+
+            # Step 2: Use prior attention to filter out task-relevant tokens
+            if prev_stats is not None:
+                with timer.stage("select_task"):
+                    result_image, remaining_static_tokens_indices = task_relevant_selection_from_scores(
+                        prev_stats.text_vision_score, image, stable_patches
+                    )
+
+                # Step 3: Merge remaining static token indices and update model config
+                mask_indices = torch.tensor(remaining_static_tokens_indices, device=DEVICE) if remaining_static_tokens_indices else None
+
+                vla.language_model.config.reusable_patches = mask_indices
+                with timer.stage("select_schedule"):
+                    vla.language_model.config.proportion_attn_var = layer_mask_schedule_from_entropies(prev_stats.entropies)
+
+    elif mode == "V":
         print(">> VLA-Cache inference mode")
-        # Step 1: Identify visually stable patches across frames
-        if prompt_cache is not None:
-            stable_patches = find_static_patches(image, prev_image, top_k=130)
+        with timer.stage("select"):
+            # Step 1: Identify visually stable patches across frames
+            if prompt_cache is not None:
+                with timer.stage("select_static"):
+                    stable_patches = find_static_patches(image, prev_image, top_k=130)
 
-        # Step 2: Use prior attention to filter out task-relevant tokens
-        if prev_attn is not None:
-            result_image, remaining_static_tokens_indices = task_relevant_selection(
-                prev_attn, image, stable_patches
-            )
+            # Step 2: Use prior attention to filter out task-relevant tokens
+            if prev_attn is not None:
+                with timer.stage("select_task"):
+                    result_image, remaining_static_tokens_indices = task_relevant_selection(
+                        prev_attn, image, stable_patches
+                    )
 
-            # Step 3: Merge remaining static token indices and update model config
-            mask_indices = torch.tensor(remaining_static_tokens_indices, device=DEVICE) if remaining_static_tokens_indices else None
+                # Step 3: Merge remaining static token indices and update model config
+                mask_indices = torch.tensor(remaining_static_tokens_indices, device=DEVICE) if remaining_static_tokens_indices else None
 
-            vla.language_model.config.reusable_patches = mask_indices
-            vla.language_model.config.proportion_attn_var = get_layer_mask_schedule(prev_attn)
+                vla.language_model.config.reusable_patches = mask_indices
+                with timer.stage("select_schedule"):
+                    vla.language_model.config.proportion_attn_var = get_layer_mask_schedule(prev_attn)
 
     else:
         print(">> VLA-Cache disabled")
@@ -423,11 +471,30 @@ def get_vla_action(cfg, vla, processor, base_vla_name, obs, task_label, unnorm_k
         prompt = f"In: What action should the robot take to {task_label.lower()}?\nOut:"
 
     # Process inputs.
-    inputs = processor(prompt, image).to(DEVICE, dtype=torch.bfloat16)
+    with timer.stage("preprocess"):
+        inputs = processor(prompt, image).to(DEVICE, dtype=torch.bfloat16)
 
-    # Get action.
-    action, last_caches = vla.predict_action(**inputs, unnorm_key=unnorm_key, do_sample=False, return_dict_in_generate=True, 
-                                                        output_attentions = True, past_key_values=prompt_cache)
-   
+    # V' collects the attention statistics for the next step during this prefill
+    collector = vla.vprime_collector if mode == "Vp" else None
+    if collector is not None:
+        collector.reset()
+        collector.enabled = True
+
+    # Get action. B0 / V' run without attention outputs (SDPA path, prefill and decode).
+    with timer.stage("predict_total"):
+        action, last_caches = vla.predict_action(**inputs, unnorm_key=unnorm_key, do_sample=False, return_dict_in_generate=True,
+                                                            output_attentions = mode in ATTENTION_OUTPUT_MODES, past_key_values=prompt_cache)
+
+    if collector is not None:
+        collector.enabled = False
+        last_caches["attn_stats"] = collector.pop()
+
     result_image = np.array(result_image)
+
+    timer.stop("step_total")
+    timer.end_step(
+        mode=mode,
+        reuse=vla.language_model.config.proportion_attn_var is not None,
+        n_reusable=len(mask_indices) if mask_indices is not None else 0,
+    )
     return action, last_caches, result_image
