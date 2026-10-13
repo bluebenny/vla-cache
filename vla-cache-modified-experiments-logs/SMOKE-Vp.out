@@ -1,0 +1,267 @@
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /workspace/env/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1640: DeprecationWarning: `torch.jit.interface` is deprecated. Please use `torch.compile` instead.
+  warnings.warn(
+[*] Instantiating Pretrained VLA model
+[*] Loading in BF16 with Flash-Attention Enabled
+Created backup of original config at: /workspace/vla-cache/src/openvla/checkpoints/openvla-7b-finetuned-libero-spatial/config.json.back.20261013_032237
+Updated config.json at: /workspace/vla-cache/src/openvla/checkpoints/openvla-7b-finetuned-libero-spatial/config.json
+Changes made:
+  - Set AutoConfig to "configuration_prismatic.OpenVLAConfig"
+  - Set AutoModelForVision2Seq to "modeling_prismatic.OpenVLAForActionPrediction"
+
+------------------------------------------------------------------------------------------------
+No modeling_prismatic.py found in checkpoint directory.
+Copied current version from: ./prismatic/extern/hf/modeling_prismatic.py
+To checkpoint location: /workspace/vla-cache/src/openvla/checkpoints/openvla-7b-finetuned-libero-spatial/modeling_prismatic.py
+------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------
+No configuration_prismatic.py found in checkpoint directory.
+Copied current version from: ./prismatic/extern/hf/configuration_prismatic.py
+To checkpoint location: /workspace/vla-cache/src/openvla/checkpoints/openvla-7b-finetuned-libero-spatial/configuration_prismatic.py
+------------------------------------------------------------------------------------------------
+
+10/13 [03:22:37] WARNING  | >> Expected                modeling_prismatic.py:229
+                          `transformers==4.40.1` and                            
+                          `tokenizers==0.19.1` but got                          
+                          `transformers==4.47.0` and                            
+                          `tokenizers==0.21.1`; there                           
+                          might be inference-time                               
+                          regressions due to                                    
+                          dependency changes. If in                             
+                          doubt, pleaseuse the above                            
+                          versions.                                             
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  2.50it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:00<00:00,  2.96it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00,  3.14it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  3.22it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  3.11it/s]
+[*] VLA mode: Vp | LLM attn_implementation: sdpa (VPrimeLlamaSdpaAttention)
+Loaded model: <class 'transformers_modules.openvla-7b-finetuned-libero-spatial.modeling_prismatic.OpenVLAForActionPrediction'>
+Logging to local log file: ./experiments/logs/EVAL-libero_spatial-openvla-Vp-2026_10_13-03_22_37--smoke.txt
+Logging stage timings to: ./experiments/logs/EVAL-libero_spatial-openvla-Vp-2026_10_13-03_22_37--smoke-timing.jsonl
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+Task suite: libero_spatial
+  0%|          | 0/10 [00:00<?, ?it/s][Warning]: datasets path /workspace/env/LIBERO/libero/datasets does not exist!
+[Warning]: datasets path /workspace/env/LIBERO/libero/datasets does not exist!
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
+Task: pick up the black bowl between the plate and the ramekin and place it on the plate
+Starting episode 1...
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 248.674469 ms | Average CUDA latency: 248.674469 ms, Average TFLOPs: 1.906716
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 168.825348 ms | Average CUDA latency: 208.749908 ms, Average TFLOPs: 1.704871
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 109.655487 ms | Average CUDA latency: 175.718435 ms, Average TFLOPs: 1.639375
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.001282 ms | Average CUDA latency: 158.539146 ms, Average TFLOPs: 1.602196
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.475777 ms | Average CUDA latency: 148.326472 ms, Average TFLOPs: 1.579889
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.613441 ms | Average CUDA latency: 141.540967 ms, Average TFLOPs: 1.567079
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.597023 ms | Average CUDA latency: 136.548975 ms, Average TFLOPs: 1.559459
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.683296 ms | Average CUDA latency: 132.690765 ms, Average TFLOPs: 1.553074
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.407356 ms | Average CUDA latency: 129.770387 ms, Average TFLOPs: 1.548108
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.863266 ms | Average CUDA latency: 127.379675 ms, Average TFLOPs: 1.542364
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 110.433792 ms | Average CUDA latency: 125.839140 ms, Average TFLOPs: 1.537177
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.507935 ms | Average CUDA latency: 124.228206 ms, Average TFLOPs: 1.532785
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 108.330109 ms | Average CUDA latency: 123.005275 ms, Average TFLOPs: 1.529545
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.671875 ms | Average CUDA latency: 121.910033 ms, Average TFLOPs: 1.526709
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.417725 ms | Average CUDA latency: 120.943879 ms, Average TFLOPs: 1.524251
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.257027 ms | Average CUDA latency: 120.088450 ms, Average TFLOPs: 1.522821
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 108.204124 ms | Average CUDA latency: 119.389372 ms, Average TFLOPs: 1.521244
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.108482 ms | Average CUDA latency: 118.707101 ms, Average TFLOPs: 1.519499
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.117821 ms | Average CUDA latency: 118.097139 ms, Average TFLOPs: 1.517331
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.127296 ms | Average CUDA latency: 117.498647 ms, Average TFLOPs: 1.515647
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 109.283455 ms | Average CUDA latency: 117.107447 ms, Average TFLOPs: 1.514712
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.968925 ms | Average CUDA latency: 116.692060 ms, Average TFLOPs: 1.512776
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 108.326271 ms | Average CUDA latency: 116.328330 ms, Average TFLOPs: 1.510239
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.961761 ms | Average CUDA latency: 115.896389 ms, Average TFLOPs: 1.508685
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.692764 ms | Average CUDA latency: 115.528244 ms, Average TFLOPs: 1.507222
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.558784 ms | Average CUDA latency: 115.144804 ms, Average TFLOPs: 1.506284
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.581696 ms | Average CUDA latency: 114.827651 ms, Average TFLOPs: 1.506102
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.179649 ms | Average CUDA latency: 114.518794 ms, Average TFLOPs: 1.505521
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.868477 ms | Average CUDA latency: 114.220507 ms, Average TFLOPs: 1.504554
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.609344 ms | Average CUDA latency: 113.966802 ms, Average TFLOPs: 1.503267
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.561089 ms | Average CUDA latency: 113.727908 ms, Average TFLOPs: 1.502236
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.357407 ms | Average CUDA latency: 113.528830 ms, Average TFLOPs: 1.500741
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.376320 ms | Average CUDA latency: 113.342390 ms, Average TFLOPs: 1.499150
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.826752 ms | Average CUDA latency: 113.121342 ms, Average TFLOPs: 1.497628
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.659805 ms | Average CUDA latency: 112.908155 ms, Average TFLOPs: 1.496522
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.720451 ms | Average CUDA latency: 112.708497 ms, Average TFLOPs: 1.495822
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.233856 ms | Average CUDA latency: 112.560533 ms, Average TFLOPs: 1.495159
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.164482 ms | Average CUDA latency: 112.418532 ms, Average TFLOPs: 1.494531
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.629852 ms | Average CUDA latency: 112.244463 ms, Average TFLOPs: 1.494072
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.968323 ms | Average CUDA latency: 112.112560 ms, Average TFLOPs: 1.493214
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.283775 ms | Average CUDA latency: 111.994785 ms, Average TFLOPs: 1.492248
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 104.437920 ms | Average CUDA latency: 111.814859 ms, Average TFLOPs: 1.491200
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.599907 ms | Average CUDA latency: 111.670326 ms, Average TFLOPs: 1.490325
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.367996 ms | Average CUDA latency: 111.549818 ms, Average TFLOPs: 1.489509
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.840637 ms | Average CUDA latency: 111.422947 ms, Average TFLOPs: 1.488335
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.824867 ms | Average CUDA latency: 111.344728 ms, Average TFLOPs: 1.487329
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.065758 ms | Average CUDA latency: 111.253686 ms, Average TFLOPs: 1.486252
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 103.125725 ms | Average CUDA latency: 111.084354 ms, Average TFLOPs: 1.485091
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 102.994049 ms | Average CUDA latency: 110.919246 ms, Average TFLOPs: 1.483994
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 104.377022 ms | Average CUDA latency: 110.788401 ms, Average TFLOPs: 1.482818
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 99.946083 ms | Average CUDA latency: 110.575807 ms, Average TFLOPs: 1.481792
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.240227 ms | Average CUDA latency: 110.511661 ms, Average TFLOPs: 1.481028
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.953468 ms | Average CUDA latency: 110.463393 ms, Average TFLOPs: 1.480192
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 99.904381 ms | Average CUDA latency: 110.267856 ms, Average TFLOPs: 1.479272
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.606400 ms | Average CUDA latency: 110.201284 ms, Average TFLOPs: 1.478498
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 108.660355 ms | Average CUDA latency: 110.173767 ms, Average TFLOPs: 1.477847
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.869537 ms | Average CUDA latency: 110.115798 ms, Average TFLOPs: 1.477327
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.300095 ms | Average CUDA latency: 110.032769 ms, Average TFLOPs: 1.476932
+>> VLA-Cache inference mode (V': SDPA)
+100%|██████████| 1/1 [01:16<00:00, 77.00s/it][A100%|██████████| 1/1 [01:16<00:00, 77.00s/it]
+ 10%|█         | 1/10 [01:21<12:09, 81.01s/it]
+Current CUDA latency: 105.680832 ms | Average CUDA latency: 109.959007 ms, Average TFLOPs: 1.476432
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.167870 ms | Average CUDA latency: 109.879155 ms, Average TFLOPs: 1.476051
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.909920 ms | Average CUDA latency: 109.830479 ms, Average TFLOPs: 1.475683
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.526207 ms | Average CUDA latency: 109.777184 ms, Average TFLOPs: 1.475326
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.227486 ms | Average CUDA latency: 109.736713 ms, Average TFLOPs: 1.474883
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.803070 ms | Average CUDA latency: 109.690875 ms, Average TFLOPs: 1.474370
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.123810 ms | Average CUDA latency: 109.651381 ms, Average TFLOPs: 1.473955
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.040352 ms | Average CUDA latency: 109.581517 ms, Average TFLOPs: 1.473647
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.611267 ms | Average CUDA latency: 109.522260 ms, Average TFLOPs: 1.473255
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.293312 ms | Average CUDA latency: 109.474775 ms, Average TFLOPs: 1.472796
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.604416 ms | Average CUDA latency: 109.418683 ms, Average TFLOPs: 1.472327
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.988670 ms | Average CUDA latency: 109.369683 ms, Average TFLOPs: 1.471971
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.919136 ms | Average CUDA latency: 109.321084 ms, Average TFLOPs: 1.471538
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.783806 ms | Average CUDA latency: 109.271955 ms, Average TFLOPs: 1.471117
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 110.620544 ms | Average CUDA latency: 109.290429 ms, Average TFLOPs: 1.470780
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.858429 ms | Average CUDA latency: 109.257564 ms, Average TFLOPs: 1.470548
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.472572 ms | Average CUDA latency: 109.233764 ms, Average TFLOPs: 1.470239
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 107.489983 ms | Average CUDA latency: 109.210819 ms, Average TFLOPs: 1.470091
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.797310 ms | Average CUDA latency: 109.179475 ms, Average TFLOPs: 1.469785
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 111.108322 ms | Average CUDA latency: 109.204204 ms, Average TFLOPs: 1.469567
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.096893 ms | Average CUDA latency: 109.164871 ms, Average TFLOPs: 1.469354
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.005821 ms | Average CUDA latency: 109.125383 ms, Average TFLOPs: 1.469214
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.063774 ms | Average CUDA latency: 109.087585 ms, Average TFLOPs: 1.469011
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 101.137756 ms | Average CUDA latency: 108.990636 ms, Average TFLOPs: 1.468531
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.121025 ms | Average CUDA latency: 108.956062 ms, Average TFLOPs: 1.468128
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.151489 ms | Average CUDA latency: 108.922675 ms, Average TFLOPs: 1.467808
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 103.025185 ms | Average CUDA latency: 108.853292 ms, Average TFLOPs: 1.467359
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 106.968285 ms | Average CUDA latency: 108.831374 ms, Average TFLOPs: 1.466984
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 100.869308 ms | Average CUDA latency: 108.739856 ms, Average TFLOPs: 1.466555
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 104.558205 ms | Average CUDA latency: 108.692337 ms, Average TFLOPs: 1.466005
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 101.714081 ms | Average CUDA latency: 108.613930 ms, Average TFLOPs: 1.465468
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 100.785347 ms | Average CUDA latency: 108.526945 ms, Average TFLOPs: 1.464951
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 100.884163 ms | Average CUDA latency: 108.442959 ms, Average TFLOPs: 1.464446
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 108.406433 ms | Average CUDA latency: 108.442562 ms, Average TFLOPs: 1.463885
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 101.878174 ms | Average CUDA latency: 108.371977 ms, Average TFLOPs: 1.463279
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 101.076927 ms | Average CUDA latency: 108.294370 ms, Average TFLOPs: 1.462685
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 100.609444 ms | Average CUDA latency: 108.213476 ms, Average TFLOPs: 1.462104
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 100.498398 ms | Average CUDA latency: 108.133111 ms, Average TFLOPs: 1.461526
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.383102 ms | Average CUDA latency: 108.104760 ms, Average TFLOPs: 1.461024
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 104.772766 ms | Average CUDA latency: 108.070760 ms, Average TFLOPs: 1.460469
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 102.481087 ms | Average CUDA latency: 108.014299 ms, Average TFLOPs: 1.460167
+>> VLA-Cache inference mode (V': SDPA)
+Current CUDA latency: 105.544769 ms | Average CUDA latency: 107.989603 ms, Average TFLOPs: 1.459808
+Saved rollout MP4 at path ./rollouts/2026_10_13/2026_10_13-03_22_37--episode=1--success=True--task=pick_up_the_black_bowl_between_the_plate_and_the_r.mp4
+Success: True
+# episodes completed so far: 1
+# successes: 1 (100.0%)
+Current task success rate: 1.0
+Current total success rate: 1.0
+[Warning]: datasets path /workspace/env/LIBERO/libero/datasets does not exist!
+[Warning]: datasets path /workspace/env/LIBERO/libero/datasets does not exist!
+
+  0%|          | 0/1 [00:00<?, ?it/s][A

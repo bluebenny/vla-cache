@@ -1,0 +1,227 @@
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /workspace/env/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1640: DeprecationWarning: `torch.jit.interface` is deprecated. Please use `torch.compile` instead.
+  warnings.warn(
+[*] Instantiating Pretrained VLA model
+[*] Loading in BF16 with Flash-Attention Enabled
+Created backup of original config at: /workspace/vla-cache/src/openvla/checkpoints/openvla-7b-finetuned-libero-spatial/config.json.back.20261013_032457
+Updated config.json at: /workspace/vla-cache/src/openvla/checkpoints/openvla-7b-finetuned-libero-spatial/config.json
+Changes made:
+  - Set AutoConfig to "configuration_prismatic.OpenVLAConfig"
+  - Set AutoModelForVision2Seq to "modeling_prismatic.OpenVLAForActionPrediction"
+10/13 [03:24:57] WARNING  | >> Expected                modeling_prismatic.py:229
+                          `transformers==4.40.1` and                            
+                          `tokenizers==0.19.1` but got                          
+                          `transformers==4.47.0` and                            
+                          `tokenizers==0.21.1`; there                           
+                          might be inference-time                               
+                          regressions due to                                    
+                          dependency changes. If in                             
+                          doubt, pleaseuse the above                            
+                          versions.                                             
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  2.48it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:00<00:00,  2.78it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:01<00:00,  2.96it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  3.07it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.96it/s]
+[*] VLA mode: B0 | LLM attn_implementation: sdpa (LlamaSdpaAttention)
+Loaded model: <class 'transformers_modules.openvla-7b-finetuned-libero-spatial.modeling_prismatic.OpenVLAForActionPrediction'>
+Logging to local log file: ./experiments/logs/EVAL-libero_spatial-openvla-B0-2026_10_13-03_24_56--smoke.txt
+Logging stage timings to: ./experiments/logs/EVAL-libero_spatial-openvla-B0-2026_10_13-03_24_56--smoke-timing.jsonl
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+Task suite: libero_spatial
+  0%|          | 0/10 [00:00<?, ?it/s][Warning]: datasets path /workspace/env/LIBERO/libero/datasets does not exist!
+[Warning]: datasets path /workspace/env/LIBERO/libero/datasets does not exist!
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
+Task: pick up the black bowl between the plate and the ramekin and place it on the plate
+Starting episode 1...
+>> VLA-Cache disabled
+Current CUDA latency: 182.571075 ms | Average CUDA latency: 182.571075 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.750305 ms | Average CUDA latency: 135.660690 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.873566 ms | Average CUDA latency: 119.731649 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.950882 ms | Average CUDA latency: 111.286457 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.864388 ms | Average CUDA latency: 106.202043 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.802689 ms | Average CUDA latency: 102.802151 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.892639 ms | Average CUDA latency: 100.672221 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.961372 ms | Average CUDA latency: 98.833364 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.589249 ms | Average CUDA latency: 97.584018 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.831421 ms | Average CUDA latency: 96.408759 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 86.108002 ms | Average CUDA latency: 95.472326 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.635841 ms | Average CUDA latency: 94.652619 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.905983 ms | Average CUDA latency: 94.133647 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.802559 ms | Average CUDA latency: 93.681426 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.692413 ms | Average CUDA latency: 93.282159 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.815521 ms | Average CUDA latency: 92.815494 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.526466 ms | Average CUDA latency: 92.504375 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.614784 ms | Average CUDA latency: 92.232731 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.823875 ms | Average CUDA latency: 91.895423 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.072540 ms | Average CUDA latency: 91.704279 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.750877 ms | Average CUDA latency: 91.516021 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.021698 ms | Average CUDA latency: 91.357188 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.782242 ms | Average CUDA latency: 91.114799 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.746590 ms | Average CUDA latency: 90.891124 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.825058 ms | Average CUDA latency: 90.768481 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.724800 ms | Average CUDA latency: 90.651417 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.535645 ms | Average CUDA latency: 90.461944 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 91.536736 ms | Average CUDA latency: 90.500329 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 86.178467 ms | Average CUDA latency: 90.351299 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.988068 ms | Average CUDA latency: 90.272525 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.904060 ms | Average CUDA latency: 90.196123 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.916862 ms | Average CUDA latency: 90.062396 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.950783 ms | Average CUDA latency: 89.937802 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.604767 ms | Average CUDA latency: 89.810360 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.847679 ms | Average CUDA latency: 89.697140 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.504227 ms | Average CUDA latency: 89.580670 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.209503 ms | Average CUDA latency: 89.462531 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.357635 ms | Average CUDA latency: 89.354507 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.603363 ms | Average CUDA latency: 89.258324 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 86.045120 ms | Average CUDA latency: 89.177994 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.867165 ms | Average CUDA latency: 89.097242 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.792480 ms | Average CUDA latency: 89.018557 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.805565 ms | Average CUDA latency: 88.943836 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.670685 ms | Average CUDA latency: 88.869446 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.680321 ms | Average CUDA latency: 88.798577 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 86.104607 ms | Average CUDA latency: 88.740012 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 86.105629 ms | Average CUDA latency: 88.683962 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.958656 ms | Average CUDA latency: 88.627185 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.876350 ms | Average CUDA latency: 88.571045 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.509537 ms | Average CUDA latency: 88.569815 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.641922 ms | Average CUDA latency: 88.551621 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.194687 ms | Average CUDA latency: 88.544757 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.778976 ms | Average CUDA latency: 88.530308 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.035233 ms | Average CUDA latency: 88.521140 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.054848 ms | Average CUDA latency: 88.512662 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.147392 ms | Average CUDA latency: 88.506139 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.029762 ms | Average CUDA latency: 88.497782 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.771965 ms | Average CUDA latency: 88.485268 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.753181 ms | Average CUDA latency: 88.438961 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.709122 ms | Average CUDA latency: 88.426797 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.882111 ms | Average CUDA latency: 88.385081 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.598495 ms | Average CUDA latency: 88.340136 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.478241 ms | Average CUDA latency: 88.294709 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.953117 ms | Average CUDA latency: 88.258122 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.604286 ms | Average CUDA latency: 88.217294 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.724930 ms | Average CUDA latency: 88.209834 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.346497 ms | Average CUDA latency: 88.196948 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.684608 ms | Average CUDA latency: 88.189414 ms, Average TFLOPs: 1.906716
+100%|██████████| 1/1 [01:01<00:00, 61.15s/it][A100%|██████████| 1/1 [01:01<00:00, 61.15s/it]
+ 10%|█         | 1/10 [01:03<09:35, 63.97s/it]
+>> VLA-Cache disabled
+Current CUDA latency: 85.672897 ms | Average CUDA latency: 88.152942 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.399200 ms | Average CUDA latency: 88.142175 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.602142 ms | Average CUDA latency: 88.134568 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.873405 ms | Average CUDA latency: 88.130941 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.866753 ms | Average CUDA latency: 88.099925 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.737251 ms | Average CUDA latency: 88.067997 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.737152 ms | Average CUDA latency: 88.036919 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.908287 ms | Average CUDA latency: 88.008911 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.465118 ms | Average CUDA latency: 87.975874 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.679169 ms | Average CUDA latency: 87.946429 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.953697 ms | Average CUDA latency: 87.959180 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.657089 ms | Average CUDA latency: 87.930404 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.933151 ms | Average CUDA latency: 87.905746 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 87.540863 ms | Average CUDA latency: 87.901296 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 88.097023 ms | Average CUDA latency: 87.903654 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.825150 ms | Average CUDA latency: 87.878910 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.944702 ms | Average CUDA latency: 87.856155 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 85.988068 ms | Average CUDA latency: 87.834433 ms, Average TFLOPs: 1.906716
+>> VLA-Cache disabled
+Current CUDA latency: 86.346977 ms | Average CUDA latency: 87.817336 ms, Average TFLOPs: 1.906716
+Saved rollout MP4 at path ./rollouts/2026_10_13/2026_10_13-03_24_56--episode=1--success=True--task=pick_up_the_black_bowl_between_the_plate_and_the_r.mp4
+Success: True
+# episodes completed so far: 1
+# successes: 1 (100.0%)
+Current task success rate: 1.0
+Current total success rate: 1.0
+[Warning]: datasets path /workspace/env/LIBERO/libero/datasets does not exist!
+[Warning]: datasets path /workspace/env/LIBERO/libero/datasets does not exist!
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
